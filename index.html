@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="알바비, 주휴수당, 퇴직금, 월급 실수령액을 한 번에 추정하는 간편 계산기입니다."
+    />
+    <title>알바비·퇴직금·실수령액 계산기 | 주휴수당·공제 추정</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">2026 급여 계산기</p>
+        <h1>알바비, 퇴직금, 실수령액을 바로 계산</h1>
+        <p class="lead">
+          시급과 근무 패턴, 근속기간, 세전 월급을 넣으면 예상 급여와 공제 금액을 한
+          화면에서 확인할 수 있습니다.
+        </p>
+      </section>
+
+      <div class="tabs" role="tablist" aria-label="계산기 선택">
+        <button class="tab is-active" id="tab-part-time" type="button" role="tab" aria-selected="true" aria-controls="panel-part-time" data-tab="part-time">알바비</button>
+        <button class="tab" id="tab-severance" type="button" role="tab" aria-selected="false" aria-controls="panel-severance" data-tab="severance">퇴직금</button>
+        <button class="tab" id="tab-net-salary" type="button" role="tab" aria-selected="false" aria-controls="panel-net-salary" data-tab="net-salary">실수령액</button>
+      </div>
+
+      <section class="calculator tab-panel is-active" id="panel-part-time" role="tabpanel" aria-labelledby="tab-part-time">
+        <form class="panel inputs" id="pay-form">
+          <label>
+            <span>시급</span>
+            <div class="field">
+              <input id="hourly-wage" type="number" min="0" inputmode="numeric" value="10030" />
+              <em>원</em>
+            </div>
+          </label>
+
+          <label>
+            <span>하루 근무시간</span>
+            <div class="field">
+              <input id="hours-per-day" type="number" min="0" step="0.5" value="6" />
+              <em>시간</em>
+            </div>
+          </label>
+
+          <label>
+            <span>주 근무일</span>
+            <div class="field">
+              <input id="days-per-week" type="number" min="0" max="7" step="1" value="5" />
+              <em>일</em>
+            </div>
+          </label>
+
+          <label>
+            <span>계산 기간</span>
+            <div class="field">
+              <input id="weeks" type="number" min="1" step="0.5" value="4.345" />
+              <em>주</em>
+            </div>
+          </label>
+
+          <fieldset>
+            <legend>공제 방식</legend>
+            <label class="choice">
+              <input type="radio" name="deduction" value="none" />
+              <span>공제 없음</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="deduction" value="tax33" checked />
+              <span>사업소득 3.3%</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="deduction" value="insurance" />
+              <span>4대보험 추정 9.4%</span>
+            </label>
+          </fieldset>
+        </form>
+
+        <aside class="panel result" aria-live="polite">
+          <div>
+            <p class="label">예상 실수령액</p>
+            <strong id="net-pay">0원</strong>
+          </div>
+          <dl>
+            <div>
+              <dt>기본급</dt>
+              <dd id="base-pay">0원</dd>
+            </div>
+            <div>
+              <dt>주휴수당</dt>
+              <dd id="weekly-holiday-pay">0원</dd>
+            </div>
+            <div>
+              <dt>총 지급액</dt>
+              <dd id="gross-pay">0원</dd>
+            </div>
+            <div>
+              <dt>예상 공제액</dt>
+              <dd id="deduction">0원</dd>
+            </div>
+          </dl>
+          <button class="copy-result" type="button" data-copy="part-time">결과 복사</button>
+        </aside>
+      </section>
+
+      <section class="calculator tab-panel" id="panel-severance" role="tabpanel" aria-labelledby="tab-severance" hidden>
+        <form class="panel inputs" id="severance-form">
+          <label>
+            <span>월 평균임금</span>
+            <div class="field">
+              <input id="average-monthly-wage" type="number" min="0" inputmode="numeric" value="2500000" />
+              <em>원</em>
+            </div>
+          </label>
+
+          <label>
+            <span>근속개월</span>
+            <div class="field">
+              <input id="service-months" type="number" min="0" step="1" value="18" />
+              <em>개월</em>
+            </div>
+          </label>
+
+          <p class="notice">1년 미만 근속은 0원으로 계산합니다. 실제 법정 퇴직금은 평균임금 산정 방식과 근무 조건에 따라 달라질 수 있습니다.</p>
+        </form>
+
+        <aside class="panel result" aria-live="polite">
+          <div>
+            <p class="label">예상 퇴직금</p>
+            <strong id="severance-pay">0원</strong>
+          </div>
+          <dl>
+            <div>
+              <dt>월 평균임금</dt>
+              <dd id="severance-average">0원</dd>
+            </div>
+            <div>
+              <dt>근속기간</dt>
+              <dd id="severance-months">0개월</dd>
+            </div>
+            <div>
+              <dt>적용 산식</dt>
+              <dd id="severance-formula">1년 미만</dd>
+            </div>
+          </dl>
+          <button class="copy-result" type="button" data-copy="severance">결과 복사</button>
+        </aside>
+      </section>
+
+      <section class="calculator tab-panel" id="panel-net-salary" role="tabpanel" aria-labelledby="tab-net-salary" hidden>
+        <form class="panel inputs" id="salary-form">
+          <label>
+            <span>월급(세전)</span>
+            <div class="field">
+              <input id="gross-monthly-salary" type="number" min="0" inputmode="numeric" value="3000000" />
+              <em>원</em>
+            </div>
+          </label>
+
+          <p class="notice">국민연금, 건강보험, 장기요양보험, 고용보험, 간이 소득세를 단순 비율로 추정합니다. 실제 세무·급여 계산과 다를 수 있습니다.</p>
+        </form>
+
+        <aside class="panel result" aria-live="polite">
+          <div>
+            <p class="label">예상 실수령액</p>
+            <strong id="salary-net-pay">0원</strong>
+          </div>
+          <dl>
+            <div>
+              <dt>예상 공제액</dt>
+              <dd id="salary-total-deduction">0원</dd>
+            </div>
+            <div>
+              <dt>국민연금 4.5%</dt>
+              <dd id="national-pension">0원</dd>
+            </div>
+            <div>
+              <dt>건강보험 3.545%</dt>
+              <dd id="health-insurance">0원</dd>
+            </div>
+            <div>
+              <dt>장기요양보험</dt>
+              <dd id="long-term-care">0원</dd>
+            </div>
+            <div>
+              <dt>고용보험 0.9%</dt>
+              <dd id="employment-insurance">0원</dd>
+            </div>
+            <div>
+              <dt>소득세 간이 3%</dt>
+              <dd id="income-tax">0원</dd>
+            </div>
+          </dl>
+          <button class="copy-result" type="button" data-copy="net-salary">결과 복사</button>
+        </aside>
+      </section>
+
+      <section class="guide">
+        <h2>계산 기준과 안내</h2>
+        <p>
+          알바비는 주 근무시간이 15시간 이상일 때 주휴수당을 추정하고, 퇴직금은
+          <strong>월 평균임금 × 근속개월 / 12</strong>로 간단 계산합니다. 실수령액은
+          4대보험과 소득세를 고정 비율로 추정하므로 실제 지급액과 차이가 날 수 있습니다.
+        </p>
+      </section>
+
+      <section class="faq" aria-label="자주 묻는 질문">
+        <h2>자주 묻는 질문</h2>
+        <details>
+          <summary>알바비 계산기의 주휴수당은 어떻게 계산하나요?</summary>
+          <p>입력한 주 근무시간이 15시간 이상이면 주 근무시간 / 40 × 8시간 × 시급 방식으로 예상 주휴수당을 더합니다.</p>
+        </details>
+        <details>
+          <summary>퇴직금 계산 결과를 그대로 써도 되나요?</summary>
+          <p>아니요. 이 계산기는 빠른 추정용입니다. 실제 퇴직금은 평균임금, 계속근로기간, 회사 규정, 법정 요건에 따라 달라질 수 있습니다.</p>
+        </details>
+        <details>
+          <summary>실수령액 계산은 정확한 급여명세서와 같나요?</summary>
+          <p>아니요. 보험료율과 간이 소득세를 단순 적용한 예상치라서 부양가족, 비과세, 공제 한도, 회사 처리 기준은 반영하지 않습니다.</p>
+        </details>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
